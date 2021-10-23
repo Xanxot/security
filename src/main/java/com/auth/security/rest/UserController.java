@@ -1,6 +1,7 @@
 package com.auth.security.rest;
 
 import com.auth.security.model.User;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,22 +18,26 @@ public class UserController {
             .collect(Collectors.toList());
 
     @GetMapping
+    @PreAuthorize("hasAuthority('user:read')")
     private List<User> getAll() {
         return usersList;
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('user:write')")
     private User getById(@PathVariable Long id) {
         return usersList.stream().filter(usersList -> usersList.getId().equals(id)).findFirst().orElse(null);
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('user:write')")
     private List<User> create(@RequestBody User user) {
         usersList.add(user);
         return usersList;
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('user:write')")
     private List<User> deleteUserById(@PathVariable Long id) {
         usersList.removeIf(usersList ->usersList.getId().equals(id));
         return usersList;
